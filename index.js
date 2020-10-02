@@ -6,6 +6,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static("build"));
 
 app.use(
   morgan((tokens, req, res) => {
@@ -51,10 +52,6 @@ let persons = [
     id: 4,
   },
 ];
-
-app.get("/", (req, res) => {
-  res.send("<h1>Phonebook backend!</h1>");
-});
 
 app.get("/api/persons", (req, res) => {
   res.json(persons);
