@@ -62,25 +62,17 @@ app.put("/api/persons/:id", (req, res, next) => {
     number: body.number,
   };
 
-  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+  Person.findByIdAndUpdate(req.params.id, person, {
+    context: "query",
+    new: true,
+    runValidators: true,
+  })
     .then((updatedPerson) => res.json(updatedPerson))
     .catch((err) => next(err));
 });
 
 app.post("/api/persons", (req, res, next) => {
   const { body } = req;
-
-  if (!body.name) {
-    return res.status(409).json({
-      error: "name is missing",
-    });
-  }
-
-  if (!body.number) {
-    return res.status(409).json({
-      error: "number is missing",
-    });
-  }
 
   const person = new Person({
     name: body.name,
@@ -89,7 +81,7 @@ app.post("/api/persons", (req, res, next) => {
 
   person
     .save()
-    .then((savedPerson) => res.json(savedPerson))
+    .then((savedPerson) => res.json(savedPerson.toJSON()))
     .catch((err) => next(err));
 });
 
@@ -105,20 +97,23 @@ app.get("/info", (req, res) => {
     .catch((err) => next(err));
 });
 
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: "unknown endpoint" });
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({ error: "unknown endpoint" });
 };
 
 app.use(unknownEndpoint);
 
-const errorHandler = (error, request, response, next) => {
-  console.error(error.message);
+const errorHandler = (err, req, res, next) => {
+  console.error(err.message);
 
-  if (error.name === "CastError") {
-    return response.status(400).send({ error: "malformatted id" });
+  switch (err.name) {
+    case "CastError":
+      return res.status(400).send({ error: "malformatted id" });
+    case "ValidationError":
+      return res.status(400).json({ error: err.message });
+    default:
+      next(err);
   }
-
-  next(error);
 };
 
 app.use(errorHandler);
