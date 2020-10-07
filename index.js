@@ -30,10 +30,6 @@ app.use(
   })
 );
 
-const generateId = () => {
-  return Math.round(Math.random() * 10000);
-};
-
 app.get("/api/persons", (req, res) => {
   Person.find({}).then((result) => {
     res.json(result);
@@ -66,27 +62,20 @@ app.post("/api/persons", (req, res) => {
     });
   }
 
-  if (persons.find((person) => person.name === body.name)) {
-    return res.status(409).json({
-      error: "name must be unique",
-    });
-  }
-
   if (!body.number) {
     return res.status(409).json({
       error: "number is missing",
     });
   }
 
-  const person = {
+  const person = new Person({
     name: body.name,
     number: body.number,
-    id: generateId(),
-  };
+  });
 
-  persons = persons.concat(person);
-
-  res.json(person);
+  person.save().then((savedPerson) => {
+    res.json(savedPerson);
+  });
 });
 
 app.get("/info", (req, res) => {
