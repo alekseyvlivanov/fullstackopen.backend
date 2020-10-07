@@ -10,7 +10,8 @@
     "build:ui": "rm -rf build && cd ../fullstackopen/part2/phonebook && npm run build && cp -r build ../../../fullstackopen.backend/",
     "deploy": "git push heroku master",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
-    "logs:prod": "heroku logs --tail"
+    "logs:prod": "heroku logs --tail",
+    "lint": "eslint ."
   },
   "author": "Aleksey Ivanov",
   "license": "ISC",
@@ -23,6 +24,14 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "eslint": "^7.10.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-prettier": "^6.12.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "jest": "^26.5.2",
+    "nodemon": "^2.0.4",
+    "prettier": "^2.1.2"
   }
 }

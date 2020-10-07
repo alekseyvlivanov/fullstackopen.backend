@@ -1,8 +1,8 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 if (process.argv.length < 3) {
   console.log(
-    "Please provide the password as an argument: node mongo.js <password>"
+    'Please provide the password as an argument: node mongo.js <password>',
   );
   process.exit(1);
 }
@@ -23,10 +23,10 @@ const personSchema = new mongoose.Schema({
   number: String,
 });
 
-const Person = mongoose.model("Person", personSchema);
+const Person = mongoose.model('Person', personSchema);
 
 if (process.argv.length < 5) {
-  console.log("phonebook:");
+  console.log('phonebook:');
 
   Person.find({}).then((result) => {
     result.forEach(({ name, number }) => {
@@ -43,7 +43,7 @@ if (process.argv.length < 5) {
     number,
   });
 
-  person.save().then((result) => {
+  person.save().then(() => {
     console.log(`added ${name} number ${number} to phonebook`);
     mongoose.connection.close();
   });
