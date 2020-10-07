@@ -32,9 +32,7 @@ app.use(
 
 app.get("/api/persons", (req, res, next) => {
   Person.find({})
-    .then((result) => {
-      res.json(result);
-    })
+    .then((persons) => res.json(persons))
     .catch((err) => next(err));
 });
 
@@ -52,9 +50,20 @@ app.get("/api/persons/:id", (req, res, next) => {
 
 app.delete("/api/persons/:id", (req, res, next) => {
   Person.findByIdAndRemove(req.params.id)
-    .then(() => {
-      res.status(204).end();
-    })
+    .then(() => res.status(204).end())
+    .catch((err) => next(err));
+});
+
+app.put("/api/persons/:id", (req, res, next) => {
+  const { body } = req;
+
+  const person = {
+    name: body.name,
+    number: body.number,
+  };
+
+  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+    .then((updatedPerson) => res.json(updatedPerson))
     .catch((err) => next(err));
 });
 
@@ -80,17 +89,15 @@ app.post("/api/persons", (req, res, next) => {
 
   person
     .save()
-    .then((savedPerson) => {
-      res.json(savedPerson);
-    })
+    .then((savedPerson) => res.json(savedPerson))
     .catch((err) => next(err));
 });
 
 app.get("/info", (req, res) => {
   Person.find({}, "id")
-    .then((result) => {
+    .then((persons) => {
       const data = `
-      <p>Phonebook has info for ${result.length} people</p>
+      <p>Phonebook has info for ${persons.length} people</p>
       <p>${new Date()}</p>
       `;
       res.send(data);
